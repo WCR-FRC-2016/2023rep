@@ -152,18 +152,22 @@ void RobotContainer::ConfigureButtonBindings() {
    // Configure your button bindings here
    // See RobotContainer.h for explanations.
 
-   m_driverA.WhenPressed(m_ToggleFOD);
-   m_driverB.WhenPressed(m_ToggleTurnCorrect);
-   m_driverX.WhileHeld(m_Xmode);
-   m_driverY.WhileHeld(m_resetGyro);
-   m_driverDPad.WhileHeld(m_rotate);
-	m_driverLT.WhenPressed(m_AdjustSpeedDown);
-	m_driverRT.WhenPressed(m_AdjustSpeedUp);
-	m_driverRB.WhenPressed(m_SwapSpeed);
+   // 1/28/2023 Littledog1229 [Zachary Murdock]
+   // Converted Button's WhenPressed to OnTrue
+   // Converted Button's WhileHeld to WhileTrue
 
-   m_driverSelectStart.WhenPressed(m_ToggleCalib);
-   m_driverACal.WhenPressed(m_IncCalibId);
-   m_driverBCal.WhenPressed(m_DecCalibId);
+   m_driverA.OnTrue(&m_ToggleFOD);
+   m_driverB.OnTrue(&m_ToggleTurnCorrect);
+   m_driverX.WhileTrue(&m_Xmode);
+   m_driverY.WhileTrue(&m_resetGyro);
+   m_driverDPad.WhileTrue(&m_rotate);
+	m_driverLT.OnTrue(&m_AdjustSpeedDown);
+	m_driverRT.OnTrue(&m_AdjustSpeedUp);
+	m_driverRB.OnTrue(&m_SwapSpeed);
+
+   m_driverSelectStart.OnTrue(&m_ToggleCalib);
+   m_driverACal.OnTrue(&m_IncCalibId);
+   m_driverBCal.OnTrue(&m_DecCalibId);
 }
 
 // Updates data on dashboard
