@@ -74,7 +74,7 @@ void SwerveModule::drive(double speed, double angle, bool allow_invert) {
     if (m_debug) wpi::outs() << "Wrapped sensor angle: " << std::to_string((double) current_angle) << "\n";
 
     bool invert = false;
-    double iangle;
+    double iangle = angle;
 
     if (allow_invert) {
         // Find the diametrically opposite angle.

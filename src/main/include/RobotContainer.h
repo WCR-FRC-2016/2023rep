@@ -61,7 +61,7 @@ class RobotContainer {
 
   // Driver X: X-mode (for defense)
   frc2::Trigger m_driverX{[&] {return m_driverStick.GetXButton() && !is_calibration_mode;}};
-  frc2::InstantCommand m_Xmode{[this] {
+  frc2::RunCommand m_Xmode{[this] {
     /*
 
     \  / 
@@ -79,7 +79,7 @@ class RobotContainer {
   
   // Driver DPad: Turn wheels without moving (for tests/calib mostly, plus helps at end of use to realign wheels)
   frc2::Trigger m_driverDPad{[&] {return m_driverStick.GetPOV()!=-1;}};
-  frc2::InstantCommand m_rotate{[this] {
+  frc2::RunCommand m_rotate{[this] {
     double pass_r = m_driverStick.GetPOV();
     pass_r /= 180.0;
     if (pass_r>=1) pass_r-=2;

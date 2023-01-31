@@ -159,7 +159,7 @@ void RobotContainer::ConfigureButtonBindings() {
    m_driverA.OnTrue(&m_ToggleFOD);
    m_driverB.OnTrue(&m_ToggleTurnCorrect);
    m_driverX.WhileTrue(&m_Xmode);
-   m_driverY.WhileTrue(&m_resetGyro);
+   m_driverY.OnTrue(&m_resetGyro);
    m_driverDPad.WhileTrue(&m_rotate);
 	m_driverLT.OnTrue(&m_AdjustSpeedDown);
 	m_driverRT.OnTrue(&m_AdjustSpeedUp);
