@@ -15,9 +15,12 @@
 #include <dirent.h>
 
 #include "subsystems/DriveBase.h"
+#include "subsystems/Limelight.h"
+#include "commands/AutoAlignCommand.h"
 #include "commands/AutoSwerveCommand.h"
 #include "commands/AutoTurnCommand.h"
 #include "RobotMap.h"
+
 #include "frc/XboxController.h"
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc2/command/RunCommand.h>
@@ -158,12 +161,15 @@ class RobotContainer {
       m_driveBase.ResetEncoders();
     }
   } , {&m_driveBase} };
+
+  frc2::Trigger m_manipA{[&] {return m_manStick.GetAButton() && !is_calibration_mode;}};
  
  private:
   frc::XboxController m_driverStick{0};
-  //frc::XboxController m_manStick{1};
+  frc::XboxController m_manStick{1};
   
   DriveBase m_driveBase;
+  Limelight m_limelight;
 
   void ConfigureButtonBindings();
 
