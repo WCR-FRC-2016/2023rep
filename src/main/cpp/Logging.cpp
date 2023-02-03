@@ -6,20 +6,37 @@ namespace wcr::logging
     {
         const auto log = (m_global_level & m_level) != 0;
 
-        if (log && m_new_line)
-            wpi::outs() << constructName();
+        //wpi::outs() << "Is Valid Level: " << std::to_string(log) << "\n";
+        //wpi::outs() << "Global Level: " << std::to_string(m_global_level) << ", Listening Level: " << std::to_string(m_level) << "\n";
+        //wpi::outs().flush(); 
+
+        if (log && m_new_line && m_construct_name) {
+            wpi::outs() << "[" << constructName() << "]: ";
+            m_new_line = false;
+        }
 
         return log;
     }
 
+    // Internal function for constructing channels
     std::string Logger::constructName()
     {
         std::stringstream value;
+        auto levels = (m_global_level & m_level);
+        uint32_t level_count = 0;
 
         for (auto i = 0; i < 32; i++)
         {
-            if (((m_global_level & m_level) & (1 << i)) != 0)
+            if ((levels & (1 << i)) != 0) {
+                if (level_count != 0 ) value << " | ";
+                
                 value << getMappedValue(1 << i);
+                level_count++;
+            }
+        }
+
+        if (level_count > 0) {
+            
         }
 
         return value.str();
@@ -123,10 +140,18 @@ namespace wcr::logging
         if (!checkLevel())
             return *this;
 
-        if (command == LoggerCommand::Flush)
+        switch (command)
         {
+        case LoggerCommand::Flush:
+            wpi::outs() << "\n";
             wpi::outs().flush();
+            this->m_new_line = true;
+
+            break;
+        default:
+            break;
         }
+
         return *this;
     }
 }

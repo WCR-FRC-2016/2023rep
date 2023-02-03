@@ -5,10 +5,11 @@
 #include "wpi/raw_ostream.h"
 
 namespace wcr::logging {
-    enum LogLevel {
+    enum LogLevel : uint32_t {
         Info = 1,
         Utility = 1 << 1,
-        Important = 1 << 2
+        Important = 1 << 2,
+        Error = 1 << 3
     };
 
     enum class LoggerCommand {
@@ -35,6 +36,9 @@ namespace wcr::logging {
         
         uint32_t m_level = 0;
         bool m_new_line = false;
+        bool m_construct_name = true;
+
+        Logger() { }
 
         static Logger& getLogger() {
             static Logger logger;
@@ -47,9 +51,13 @@ namespace wcr::logging {
             case 0:
                 return "None";
             case 1:
-                return "Test";
+                return "Info";
             case 1 << 1:
-                return "Test2";
+                return "Utility";
+            case 1 << 2:
+                return "Important";
+            case 1 << 3:
+                return "Error";
             default:
                 return "Invalid";
             }
@@ -59,26 +67,58 @@ namespace wcr::logging {
         bool checkLevel();
     
     public:
-        static Logger& log(const int log_level)
+        // Logging function, sets the message output channels and returns a logger to push values into
+        static Logger& log(const uint32_t log_level)
         {
+            
             auto& logger = getLogger();
             logger.m_level = log_level;
+            logger.m_new_line = true;
 
             return logger;
         }
+        // Logging function, sets the message output channels and returns a logger to push values into
         static Logger& log(const LogLevel log_level)
         {
             auto& logger = getLogger();
             logger.m_level = log_level;
+            logger.m_new_line = true;
+
+            return logger;
+        }
+        // Logging function with the ability to set whether it adds the levels names
+        static Logger& log(const LogLevel log_level, const bool construct_name) {
+            auto& logger = getLogger();
+            logger.m_level = log_level;
+            logger.m_new_line = true;
+            logger.m_construct_name = construct_name;
+
+            return logger;
+        }
+        // Logging function with the ability to set whether it adds the levels names
+        static Logger& log(const uint32_t log_level, const bool construct_name)
+        {
+            
+            auto& logger = getLogger();
+            logger.m_level = log_level;
+            logger.m_new_line = true;
+            logger.m_construct_name = construct_name;
 
             return logger;
         }
 
+        // Sets the global logging level (and what channels it accepts, use | to add multiple)
         static void setGlobalLevel(const int level) {
             getLogger().m_global_level = level;
         }
+        // Sets the global logging level (and what channels it accepts, use | to add multiple)
         static void setGlobalLevel(const LogLevel log_level) {
             getLogger().m_global_level = log_level;
+        }
+
+        // Sets whether it should include the levels being logged [If you constantly use, make this false] (enabled by default)
+        static void setConstructName(const bool value) {
+            getLogger().m_construct_name = value;
         }
     };
 }
