@@ -15,14 +15,20 @@
 #include <dirent.h>
 
 #include "subsystems/DriveBase.h"
+#include "subsystems/Limelight.h"
+#include "commands/AutoAlignCommand.h"
 #include "commands/AutoSwerveCommand.h"
 #include "commands/AutoTurnCommand.h"
 #include "RobotMap.h"
+
 #include "frc/XboxController.h"
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/button/Button.h>
+
+// TEMPORARY
+#include "Logging.hpp"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -48,20 +54,20 @@ class RobotContainer {
   double angles[4];
 
   // Driver A: Toggle FOD
-  frc2::Button m_driverA{[&] {return m_driverStick.GetAButton() && !is_calibration_mode;}};
+  frc2::Trigger m_driverA{[&] {return m_driverStick.GetAButton() && !is_calibration_mode;}};
   frc2::InstantCommand m_ToggleFOD{[this] {
     if (robotConfig["useFOD"]>0) robotConfig["useFOD"]=0; else robotConfig["useFOD"]=1;
   } , {&m_driveBase} };
 
   // Driver B: Toggle Turn Correct
-  frc2::Button m_driverB{[&] {return m_driverStick.GetBButton() && !is_calibration_mode;}};
+  frc2::Trigger m_driverB{[&] {return m_driverStick.GetBButton() && !is_calibration_mode;}};
   frc2::InstantCommand m_ToggleTurnCorrect{[this] {
     if (robotConfig["useTurnCorrect"]>0) robotConfig["useTurnCorrect"]=0; else robotConfig["useTurnCorrect"]=1;
   } , {&m_driveBase} };
 
   // Driver X: X-mode (for defense)
-  frc2::Button m_driverX{[&] {return m_driverStick.GetXButton() && !is_calibration_mode;}};
-  frc2::InstantCommand m_Xmode{[this] {
+  frc2::Trigger m_driverX{[&] {return m_driverStick.GetXButton() && !is_calibration_mode;}};
+  frc2::RunCommand m_Xmode{[this] {
     /*
 
     \  / 
@@ -74,12 +80,12 @@ class RobotContainer {
   } , {&m_driveBase} };
 
   // Driver Y: Reset Drivebase Gyro
-  frc2::Button m_driverY{[&] {return m_driverStick.GetYButton() && !is_calibration_mode;}};
+  frc2::Trigger m_driverY{[&] {return m_driverStick.GetYButton() && !is_calibration_mode;}};
   frc2::InstantCommand m_resetGyro{[this] {m_driveBase.ResetGyro();}, {&m_driveBase}};
   
   // Driver DPad: Turn wheels without moving (for tests/calib mostly, plus helps at end of use to realign wheels)
-  frc2::Button m_driverDPad{[&] {return m_driverStick.GetPOV()!=-1;}};
-  frc2::InstantCommand m_rotate{[this] {
+  frc2::Trigger m_driverDPad{[&] {return m_driverStick.GetPOV()!=-1;}};
+  frc2::RunCommand m_rotate{[this] {
     double pass_r = m_driverStick.GetPOV();
     pass_r /= 180.0;
     if (pass_r>=1) pass_r-=2;
@@ -91,15 +97,15 @@ class RobotContainer {
   } , {&m_driveBase} };
   
   // Driver Left Trigger: Adjust speed -0.1
-  frc2::Button m_driverLT{[&] {return 0.5 < m_driverStick.GetLeftTriggerAxis() && !is_calibration_mode;}};
+  frc2::Trigger m_driverLT{[&] {return 0.5 < m_driverStick.GetLeftTriggerAxis() && !is_calibration_mode;}};
   frc2::InstantCommand m_AdjustSpeedDown{[this] {m_driveBase.setSpeed(m_driveBase.getSpeed()-0.1);} , {&m_driveBase} };
   
   // Driver Right Trigger: Adjust speed +0.1
-  frc2::Button m_driverRT{[&] {return 0.5 < m_driverStick.GetRightTriggerAxis() && !is_calibration_mode;}};
+  frc2::Trigger m_driverRT{[&] {return 0.5 < m_driverStick.GetRightTriggerAxis() && !is_calibration_mode;}};
   frc2::InstantCommand m_AdjustSpeedUp{[this] {m_driveBase.setSpeed(m_driveBase.getSpeed()+0.1);} , {&m_driveBase} };
   
   // Driver Right Bumper: Swap speed to 1 or 0.5 (0.5 if at 1, otherwise 1)
-  frc2::Button m_driverRB{[&] {return m_driverStick.GetRightBumper() && !is_calibration_mode;}};
+  frc2::Trigger m_driverRB{[&] {return m_driverStick.GetRightBumper() && !is_calibration_mode;}};
   frc2::InstantCommand m_SwapSpeed{[this] {m_driveBase.setSpeed(m_driveBase.getSpeed()>0.95?0.5:1.0);} , {&m_driveBase} };
 
   // Driver Left Bumper: Use turn-to-angle (wrapped into drivebase default command)
@@ -113,7 +119,7 @@ class RobotContainer {
 
 
   // Driver Select+Start: Toggle calibration mode
-  frc2::Button m_driverSelectStart{[&] {return m_driverStick.GetBackButton() && m_driverStick.GetStartButton();}};
+  frc2::Trigger m_driverSelectStart{[&] {return m_driverStick.GetBackButton() && m_driverStick.GetStartButton();}};
   frc2::InstantCommand m_ToggleCalib{[this] {
     is_calibration_mode = !is_calibration_mode;
     angles[0] = 0; angles[1] = 0; angles[2] = 0; angles[3] = 0;
@@ -130,7 +136,7 @@ class RobotContainer {
   } , {&m_driveBase} };
 
   // Driver A Calib: Next module
-  frc2::Button m_driverACal{[&] {return m_driverStick.GetAButton() && is_calibration_mode;}};
+  frc2::Trigger m_driverACal{[&] {return m_driverStick.GetAButton() && is_calibration_mode;}};
   frc2::InstantCommand m_IncCalibId{[this] {
     if (calib_id==4) {
       // Change from gyro calib.
@@ -145,7 +151,7 @@ class RobotContainer {
   } , {&m_driveBase} };
 
   // Driver B Calib: Previous module
-  frc2::Button m_driverBCal{[&] {return m_driverStick.GetBButton() && is_calibration_mode;}};
+  frc2::Trigger m_driverBCal{[&] {return m_driverStick.GetBButton() && is_calibration_mode;}};
   frc2::InstantCommand m_DecCalibId{[this] {
     if (calib_id==4) {
       // Change from gyro calib.
@@ -158,12 +164,15 @@ class RobotContainer {
       m_driveBase.ResetEncoders();
     }
   } , {&m_driveBase} };
+
+  frc2::Trigger m_manipA{[&] {return m_manStick.GetAButton() && !is_calibration_mode;}};
  
  private:
   frc::XboxController m_driverStick{0};
-  //frc::XboxController m_manStick{1};
+  frc::XboxController m_manStick{1};
   
   DriveBase m_driveBase;
+  Limelight m_limelight;
 
   void ConfigureButtonBindings();
 

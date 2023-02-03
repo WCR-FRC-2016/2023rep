@@ -10,6 +10,7 @@
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
 #include "subsystems/DriveBase.h"
+#include "subsystems/Limelight.h"
 
 /**
  * An example command.
@@ -18,11 +19,10 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class AutoSwerveCommand
-    : public frc2::CommandHelper<frc2::CommandBase, AutoSwerveCommand> {
+class AutoAlignCommand
+    : public frc2::CommandHelper<frc2::CommandBase, AutoAlignCommand> {
  public:
-  AutoSwerveCommand(DriveBase& drivebase, double x, double y, double turn, double time);
-  AutoSwerveCommand(DriveBase& drivebase, double x, double y, double angle);
+  AutoAlignCommand(DriveBase& drivebase, Limelight& limelight);
 
   void Initialize() override;
 
@@ -33,10 +33,5 @@ class AutoSwerveCommand
   bool IsFinished() override;
 private:
   DriveBase& m_drivebase;
-  double m_x;
-  double m_y;
-  double m_turn;
-  double m_time;
-  double m_elapsed;
-  bool m_useAngle;
+  Limelight& m_limelight;
 };

@@ -42,6 +42,10 @@ std::map<std::string, double> robotConfig = {
     {"correctI", 0},
     {"correctD", 0},
 
+    // Position of auto target relative to tag (+x right?, +z forward; in meters, probably).
+    {"autoTargetX", 0},
+    {"autoTargetZ", 1},
+
     // Width and length of robot, from wheel to wheel.
     {"W", 20.35},
     {"L", 21},
@@ -152,18 +156,24 @@ void RobotContainer::ConfigureButtonBindings() {
    // Configure your button bindings here
    // See RobotContainer.h for explanations.
 
-   m_driverA.WhenPressed(m_ToggleFOD);
-   m_driverB.WhenPressed(m_ToggleTurnCorrect);
-   m_driverX.WhileHeld(m_Xmode);
-   m_driverY.WhileHeld(m_resetGyro);
-   m_driverDPad.WhileHeld(m_rotate);
-	m_driverLT.WhenPressed(m_AdjustSpeedDown);
-	m_driverRT.WhenPressed(m_AdjustSpeedUp);
-	m_driverRB.WhenPressed(m_SwapSpeed);
+   // 1/28/2023 Littledog1229 [Zachary Murdock]
+   // Converted Button's WhenPressed to OnTrue
+   // Converted Button's WhileHeld to WhileTrue
 
-   m_driverSelectStart.WhenPressed(m_ToggleCalib);
-   m_driverACal.WhenPressed(m_IncCalibId);
-   m_driverBCal.WhenPressed(m_DecCalibId);
+   m_driverA.OnTrue(&m_ToggleFOD);
+   m_driverB.OnTrue(&m_ToggleTurnCorrect);
+   m_driverX.WhileTrue(&m_Xmode);
+   m_driverY.OnTrue(&m_resetGyro);
+   m_driverDPad.WhileTrue(&m_rotate);
+	m_driverLT.OnTrue(&m_AdjustSpeedDown);
+	m_driverRT.OnTrue(&m_AdjustSpeedUp);
+	m_driverRB.OnTrue(&m_SwapSpeed);
+
+   m_driverSelectStart.OnTrue(&m_ToggleCalib);
+   m_driverACal.OnTrue(&m_IncCalibId);
+   m_driverBCal.OnTrue(&m_DecCalibId);
+
+   m_manipA.WhileTrue(new AutoAlignCommand(m_driveBase, m_limelight));
 }
 
 // Updates data on dashboard
@@ -190,6 +200,15 @@ void RobotContainer::ReadFile() {
 // Reads config file.
 void RobotContainer::SetConfig() {
    wpi::outs() << "Reading file!\n";
+
+   // Logger Usage Example Code
+   // Logger::setGlobalLevel(LogLevel::Info);
+   // Logger::log(LogLevel::Info) << "This is some info!" << LoggerCommand::Flush;
+   // Logger::log(LogLevel::Important) << "This is something important!" << LoggerCommand::Flush;
+   // Logger::log(LogLevel::Important | LogLevel::Info) << "This is something important and Informational!" << LoggerCommand::Flush;
+   // Logger::log(LogLevel::Utility) << "I shouldn't be seen since my level isn't listened to!" << LoggerCommand::Flush;
+   // Logger::log(LogLevel::Utility | LogLevel::Important) << "But I should be seen since one of my levels is seen!" << LoggerCommand::Flush;
+   // Logger::log(LogLevel::Error) << "Test " << 1 << 1.0 << 1.0f << 'c' << "\n" << LoggerCommand::Flush;
 
    // Reset file to start.
    configfile.close();
@@ -233,17 +252,17 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
 
    switch (verb[0]) {
       case 't': // Turn
-         return new AutoTurnCommand(&m_driveBase, args[0], args[1], args[2], args[3], args[4]);
+         return new AutoTurnCommand(m_driveBase, args[0], args[1], args[2], args[3], args[4]);
          break;
       case 'r': // Reset angle
          return &m_ResetAngle;
          break;
       case 'a': // Drive (turn-to-angle)
-         return new AutoSwerveCommand(&m_driveBase, args[0], args[1], args[2]);
+         return new AutoSwerveCommand(m_driveBase, args[0], args[1], args[2]);
          break;
       case 'd': // Drive (left/right turn)
       default:
-         return new AutoSwerveCommand(&m_driveBase, args[0], args[1], args[2], args[3]);
+         return new AutoSwerveCommand(m_driveBase, args[0], args[1], args[2], args[3]);
          break;
    }
 }

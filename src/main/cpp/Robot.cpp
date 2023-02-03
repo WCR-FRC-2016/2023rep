@@ -19,6 +19,7 @@ void Robot::RobotInit() {
 
     //wpi::outs() << camera.GetPath() << "\n";
   }
+  
 }
 
 /**
