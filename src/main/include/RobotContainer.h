@@ -15,9 +15,12 @@
 #include <dirent.h>
 
 #include "subsystems/DriveBase.h"
+#include "subsystems/Limelight.h"
+#include "commands/AutoAlignCommand.h"
 #include "commands/AutoSwerveCommand.h"
 #include "commands/AutoTurnCommand.h"
 #include "RobotMap.h"
+
 #include "frc/XboxController.h"
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc2/command/RunCommand.h>
@@ -64,7 +67,7 @@ class RobotContainer {
 
   // Driver X: X-mode (for defense)
   frc2::Trigger m_driverX{[&] {return m_driverStick.GetXButton() && !is_calibration_mode;}};
-  frc2::InstantCommand m_Xmode{[this] {
+  frc2::RunCommand m_Xmode{[this] {
     /*
 
     \  / 
@@ -82,7 +85,7 @@ class RobotContainer {
   
   // Driver DPad: Turn wheels without moving (for tests/calib mostly, plus helps at end of use to realign wheels)
   frc2::Trigger m_driverDPad{[&] {return m_driverStick.GetPOV()!=-1;}};
-  frc2::InstantCommand m_rotate{[this] {
+  frc2::RunCommand m_rotate{[this] {
     double pass_r = m_driverStick.GetPOV();
     pass_r /= 180.0;
     if (pass_r>=1) pass_r-=2;
@@ -161,12 +164,15 @@ class RobotContainer {
       m_driveBase.ResetEncoders();
     }
   } , {&m_driveBase} };
+
+  frc2::Trigger m_manipA{[&] {return m_manStick.GetAButton() && !is_calibration_mode;}};
  
  private:
   frc::XboxController m_driverStick{0};
-  //frc::XboxController m_manStick{1};
+  frc::XboxController m_manStick{1};
   
   DriveBase m_driveBase;
+  Limelight m_limelight;
 
   void ConfigureButtonBindings();
 

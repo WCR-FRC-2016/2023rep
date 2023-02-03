@@ -159,7 +159,7 @@ void RobotContainer::ConfigureButtonBindings() {
    m_driverA.OnTrue(&m_ToggleFOD);
    m_driverB.OnTrue(&m_ToggleTurnCorrect);
    m_driverX.WhileTrue(&m_Xmode);
-   m_driverY.WhileTrue(&m_resetGyro);
+   m_driverY.OnTrue(&m_resetGyro);
    m_driverDPad.WhileTrue(&m_rotate);
 	m_driverLT.OnTrue(&m_AdjustSpeedDown);
 	m_driverRT.OnTrue(&m_AdjustSpeedUp);
@@ -168,6 +168,8 @@ void RobotContainer::ConfigureButtonBindings() {
    m_driverSelectStart.OnTrue(&m_ToggleCalib);
    m_driverACal.OnTrue(&m_IncCalibId);
    m_driverBCal.OnTrue(&m_DecCalibId);
+
+   m_manipA.WhileTrue(new AutoAlignCommand(m_driveBase, m_limelight));
 }
 
 // Updates data on dashboard
@@ -245,17 +247,17 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
 
    switch (verb[0]) {
       case 't': // Turn
-         return new AutoTurnCommand(&m_driveBase, args[0], args[1], args[2], args[3], args[4]);
+         return new AutoTurnCommand(m_driveBase, args[0], args[1], args[2], args[3], args[4]);
          break;
       case 'r': // Reset angle
          return &m_ResetAngle;
          break;
       case 'a': // Drive (turn-to-angle)
-         return new AutoSwerveCommand(&m_driveBase, args[0], args[1], args[2]);
+         return new AutoSwerveCommand(m_driveBase, args[0], args[1], args[2]);
          break;
       case 'd': // Drive (left/right turn)
       default:
-         return new AutoSwerveCommand(&m_driveBase, args[0], args[1], args[2], args[3]);
+         return new AutoSwerveCommand(m_driveBase, args[0], args[1], args[2], args[3]);
          break;
    }
 }

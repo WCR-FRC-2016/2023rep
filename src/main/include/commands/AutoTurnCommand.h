@@ -21,7 +21,7 @@
 class AutoTurnCommand
     : public frc2::CommandHelper<frc2::CommandBase, AutoTurnCommand> {
  public:
-  AutoTurnCommand(DriveBase* drivebase, double FR, double FL, double BR, double BL, double time);
+  AutoTurnCommand(DriveBase& drivebase, double FR, double FL, double BR, double BL, double time);
 
   void Initialize() override;
 
@@ -31,7 +31,7 @@ class AutoTurnCommand
 
   bool IsFinished() override;
 private:
-  DriveBase* m_drivebase;
+  DriveBase& m_drivebase;
   double m_FR;
   double m_FL;
   double m_BR;
