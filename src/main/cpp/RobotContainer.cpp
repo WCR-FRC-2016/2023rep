@@ -197,13 +197,14 @@ void RobotContainer::ReadFile() {
 void RobotContainer::SetConfig() {
    wpi::outs() << "Reading file!\n";
 
-   // Temporary Logger Stuff
-   wcr::logging::Logger::setGlobalLevel(wcr::logging::LogLevel::Info);
-   wcr::logging::Logger::log(wcr::logging::LogLevel::Info) << "This is some info!" << wcr::logging::LoggerCommand::Flush;
-   wcr::logging::Logger::log(wcr::logging::LogLevel::Important) << "This is something important!" << wcr::logging::LoggerCommand::Flush;
-   wcr::logging::Logger::log(wcr::logging::LogLevel::Important | wcr::logging::LogLevel::Info) << "This is something important and Informational!" << wcr::logging::LoggerCommand::Flush;
-   wcr::logging::Logger::log(wcr::logging::LogLevel::Utility) << "I shouldn't be seen since my level isn't listened to!" << wcr::logging::LoggerCommand::Flush;
-   wcr::logging::Logger::log(wcr::logging::LogLevel::Utility | wcr::logging::LogLevel::Important) << "But I should be seen since one of my levels is seen!" << wcr::logging::LoggerCommand::Flush;
+   // Logger Usage Example Code
+   // Logger::setGlobalLevel(LogLevel::Info);
+   // Logger::log(LogLevel::Info) << "This is some info!" << LoggerCommand::Flush;
+   // Logger::log(LogLevel::Important) << "This is something important!" << LoggerCommand::Flush;
+   // Logger::log(LogLevel::Important | LogLevel::Info) << "This is something important and Informational!" << LoggerCommand::Flush;
+   // Logger::log(LogLevel::Utility) << "I shouldn't be seen since my level isn't listened to!" << LoggerCommand::Flush;
+   // Logger::log(LogLevel::Utility | LogLevel::Important) << "But I should be seen since one of my levels is seen!" << LoggerCommand::Flush;
+   // Logger::log(LogLevel::Error) << "Test " << 1 << 1.0 << 1.0f << 'c' << "\n" << LoggerCommand::Flush;
 
    // Reset file to start.
    configfile.close();
