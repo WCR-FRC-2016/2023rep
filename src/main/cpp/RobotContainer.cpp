@@ -42,6 +42,10 @@ std::map<std::string, double> robotConfig = {
     {"correctI", 0},
     {"correctD", 0},
 
+    // Position of auto target relative to tag (+x right?, +z forward; in meters, probably).
+    {"autoTargetX", 0},
+    {"autoTargetZ", 1},
+
     // Width and length of robot, from wheel to wheel.
     {"W", 20.35},
     {"L", 21},
