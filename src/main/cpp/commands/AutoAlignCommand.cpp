@@ -22,13 +22,13 @@ void AutoAlignCommand::Execute() {
     double z = m_limelight.GetZ()+robotConfig["autoTargetZ"];
     double angle = m_limelight.GetHeading();
     
-    wpi::outs() << std::to_string(x) << " " << std::to_string(z) << " " << std::to_string(angle) << "\n";
+    //wpi::outs() << std::to_string(x) << " " << std::to_string(z) << " " << std::to_string(angle) << "\n";
 
     x = std::clamp(5*x, -1.0, 1.0);
     z = std::clamp(-5*z, -1.0, 1.0);
     angle = std::clamp(-angle/30, -1.0, 1.0);
 
-    wpi::outs() << std::to_string(x) << " " << std::to_string(z) << " " << std::to_string(angle) << "\n";
+    //wpi::outs() << std::to_string(x) << " " << std::to_string(z) << " " << std::to_string(angle) << "\n";
 
     m_drivebase.Swerve(x, z, angle);
 }

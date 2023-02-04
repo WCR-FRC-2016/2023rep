@@ -7,15 +7,21 @@
 
 #pragma once
 
+#include <vector>
+
 #include "RobotMap.h"
 
-#include <ctre/Phoenix.h>
+#include <rev/CANSparkMax.h>
 #include <frc/controller/PIDController.h>
 
 class SwerveModule {
     private:
-        WPI_TalonSRX* angleMotor; // Motor to rotate the module
-        WPI_TalonSRX* driveMotor; // Motor to move the robot
+        rev::CANSparkMax* angleMotor; // Motor to rotate the module
+        rev::CANSparkMax* driveMotor; // Motor to move the robot
+
+        // Angle Encoder (Through Bore)
+        // This is a vector. It's really annoying, but it won't build otherwise.
+        std::vector<rev::SparkMaxAbsoluteEncoder> encoder;
 
         frc2::PIDController pid;
 
@@ -29,6 +35,6 @@ class SwerveModule {
         void drive(double speed);
         void turn(double speed);
         void Reset(double sensorScale);
-        void ResetEncoder();
+        //void ResetEncoder();
         double GetRawAngle();
 };

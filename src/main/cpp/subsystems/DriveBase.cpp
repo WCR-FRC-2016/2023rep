@@ -51,7 +51,7 @@ void DriveBase::DriveBaseInit() {
 void DriveBase::Swerve(double x, double y, double turn) {
 	//wpi::outs() << "AHRS angle: " << std::to_string( ahrs -> GetAngle()) << "\n";
 	
-	wpi::outs().flush();
+	//wpi::outs().flush();
 
 	if (x==0 && y==0 && turn==0) {
 		//wpi::outs() << "Not moving.\n";
@@ -212,16 +212,6 @@ void DriveBase::ResetGyro() {
 	}
 }
 
-// Reset all modules' angle encoders
-void DriveBase::ResetEncoders() {
-	if (initialized) {
-		FrontL.ResetEncoder();
-		FrontR.ResetEncoder();
-		BackL.ResetEncoder();
-		BackR.ResetEncoder();
-	}
-}
-
 double DriveBase::getSpeed() {
 	return speed;
 }
@@ -242,10 +232,10 @@ double DriveBase::GetAngle() {
 }
 
 void DriveBase::DebugRawAngles() {
-	wpi::outs() << "FrontL: " << std::to_string((double) FrontL.GetRawAngle()) << "\n";
-	wpi::outs() << "FrontR: " << std::to_string((double) FrontR.GetRawAngle()) << "\n";
-	wpi::outs() << "BackL: " << std::to_string((double) BackL.GetRawAngle()) << "\n";
-	wpi::outs() << "BackR: " << std::to_string((double) BackR.GetRawAngle()) << "\n";
+	//wpi::outs() << "FrontL: " << std::to_string((double) FrontL.GetRawAngle()) << "\n";
+	//wpi::outs() << "FrontR: " << std::to_string((double) FrontR.GetRawAngle()) << "\n";
+	//wpi::outs() << "BackL: " << std::to_string((double) BackL.GetRawAngle()) << "\n";
+	//wpi::outs() << "BackR: " << std::to_string((double) BackR.GetRawAngle()) << "\n";
 
-	wpi::outs().flush();
+	//wpi::outs().flush();
 }

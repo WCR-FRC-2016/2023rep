@@ -126,11 +126,11 @@ class RobotContainer {
     if (!is_calibration_mode) {
       // End calib
       m_driveBase.ResetGyro();
-      if (calib_id!=4) {
+      /*if (calib_id!=4) {
         // Only reset encoders if not recently turning
         // When turning, modules are in /\ shape (not straightened)
         m_driveBase.ResetEncoders(); // \/
-      }
+      }*/
     }
     calib_id = 0;
   } , {&m_driveBase} };
@@ -146,7 +146,7 @@ class RobotContainer {
     if (calib_id>=5) calib_id=0;
     if (calib_id==4) {
       // Change to gyro calib.
-      m_driveBase.ResetEncoders();
+      //m_driveBase.ResetEncoders();
     }
   } , {&m_driveBase} };
 
@@ -161,7 +161,7 @@ class RobotContainer {
     if (calib_id<0) calib_id=4;
     if (calib_id==4) {
       // Change to gyro calib.
-      m_driveBase.ResetEncoders();
+      //m_driveBase.ResetEncoders();
     }
   } , {&m_driveBase} };
 

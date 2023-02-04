@@ -40,7 +40,7 @@ class DriveBase : public frc2::SubsystemBase {
   void Periodic();
   void Reset();
   void ResetGyro();
-  void ResetEncoders();
+  //void ResetEncoders();
   void Swerve(double x, double y, double turn);
   void SwerveToAngle(double x, double y, double angle);
   bool AtAngle();
