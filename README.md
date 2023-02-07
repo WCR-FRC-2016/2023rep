@@ -26,3 +26,41 @@
 ## Helpful Links
 
 - [Google's c++ Style Guide](https://google.github.io/styleguide/cppguide.html)
+
+## Tasks for the Year
+
+- [ ] Update code for new swerve modules
+- [ ] Write autonomous routines
+- [ ] Create subsystems for robot code
+    - [ ] Drivebase
+        - [ ] Snap to rotation
+    - [ ] Arm
+    - [ ] Collector
+- [ ] Controller Design [comment]: # (Do we have any ideas like our rumble feature last year we want to implement?)
+    - [ ] Document and share controller design
+- [ ] Tele-auto scoring
+    - [ ] Detect AprilTags
+    - [ ] Align robot to AprilTags
+    - [ ] Align robot to reflective tape
+    - [ ] Auto extend arm to right height
+    - [ ] Auto score
+- [ ] Tele-auto balance
+    - [ ] Get balance of robot
+    - [ ] Maneuver robot based on balance
+- [ ] Tele-auto loading
+    - [ ] AprilTags work for scoring repurposed
+    - [ ] Auto collect
+- [ ] Tele-auto arm levels
+- [ ] Color detection [comment]: # (Is this still needed?)
+- [ ] Driver camera
+- [ ] Limelight 3 configured
+- [ ] Auto-mono-piece-control [comment]: # (I do not think this is not needed based on mechanical design)
+- [ ] LED Panel
+    - [ ] Request indicator for human player
+    - [ ] Align indicator based on reflective tape in case Limelight visual fails
+- [ ] Sound effects!
+- [ ] Care for code
+    - [ ] Document
+    - [ ] Refactor
+    - [ ] Level based logging
+    - [ ] JSON/YAML config instead of flat text
