@@ -29,17 +29,24 @@
 
 ## Tasks for the Year
 
-- [ ] Update code for new swerve modules
+- [x] Update code for new swerve modules
+- [ ] Add variable speed
+- [ ] Fix acceleration?
 - [ ] Write autonomous routines
+    - [ ] Routine A: Score two from furthest-from-loading-bay
+    - [ ] Routine B: Score one
+    - [ ] Routine C: Score one and auto-balance
+    - [ ] Routine D: Taxi
+    - [ ] Finalize list
 - [ ] Create subsystems for robot code
     - [ ] Drivebase
         - [ ] Snap to rotation
     - [ ] Arm
     - [ ] Collector
-- [ ] Controller Design [comment]: # (Do we have any ideas like our rumble feature last year we want to implement?)
+- [ ] Controller Design
     - [ ] Document and share controller design
 - [ ] Tele-auto scoring
-    - [ ] Detect AprilTags
+    - [x] Detect AprilTags
     - [ ] Align robot to AprilTags
     - [ ] Align robot to reflective tape
     - [ ] Auto extend arm to right height
@@ -51,16 +58,17 @@
     - [ ] AprilTags work for scoring repurposed
     - [ ] Auto collect
 - [ ] Tele-auto arm levels
-- [ ] Color detection [comment]: # (Is this still needed?)
+- [ ] Color detection?
 - [ ] Driver camera
 - [ ] Limelight 3 configured
-- [ ] Auto-mono-piece-control [comment]: # (I do not think this is not needed based on mechanical design)
+- [ ] ~~Auto-mono-piece-control~~
 - [ ] LED Panel
     - [ ] Request indicator for human player
     - [ ] Align indicator based on reflective tape in case Limelight visual fails
 - [ ] Sound effects!
 - [ ] Care for code
     - [ ] Document
-    - [ ] Refactor
-    - [ ] Level based logging
+    - [x] Refactor
+    - [x] Level based logging
+        - [ ] Update to include units library
     - [ ] JSON/YAML config instead of flat text
