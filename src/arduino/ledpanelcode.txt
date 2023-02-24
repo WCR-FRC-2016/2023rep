@@ -1,0 +1,206 @@
+//VARIABLES AND DEFINES HERE - NEEDED BY THE WS2812 DRIVER CODE
+#define WS2812_pin 8 // only digital pin 8 works right now
+#define numberOfLEDs 512// total number of RGB LEDs
+byte RGB[1536];//take your number of LEDs and multiply by 3
+
+// FUNCTIONS HERE
+void RGB_update(int LED, byte RED, byte GREEN, byte BLUE);//function to drive LEDs
+
+void cone();
+
+void cube();
+
+void setup() {
+  pinMode(WS2812_pin, OUTPUT);
+  cube2();
+}//setup
+
+
+void loop() {
+}//loop
+
+int pos(int x, int y) {
+  int output = 0;
+  output += floor(x/2)*32;
+  if (x%2==0) {
+    output+=y;
+  } else {
+    output+=31-y;
+  }
+  return output;
+}
+void cone(){
+  for (int y=1; y<=15; y++) {
+    int minx = 15-y/3;
+    int maxx = 16+y/3;
+    if(y >= 14){
+      minx = 9;
+      maxx = 22;
+    }
+  
+    for (int x=minx; x<=maxx; x++) {
+      RGB_update(pos(x,y), 255, 70, 0); //LED#, RED, GREEN, BLUE
+      delay(5);
+    }
+    delay(100);
+  }
+  delay(1000);
+}
+
+void cube(){
+  for(int y = 0; y<16; y++){
+  int minx = 7;
+  int maxx = 22;
+  if(y == 0||y == 15){
+    minx = 8;
+    maxx = 21;
+  }
+  
+  for (int x=minx; x<=maxx; x++) {
+      RGB_update(pos(x,y), 116, 0, 255); //LED#, RED, GREEN, BLUE
+      delay(1);
+  }
+    }
+  
+}
+
+void cube2(){
+  for(int y = 0; y<=15; y++) {
+    for(int x = 8; x<=23; x++) {
+      RGB_update(pos(x,y), 116, 0, 255);
+      delay(1);
+    }
+    delay(10);
+  }
+
+  RGB_update(pos(8,0), 0,0,0);delay(1);
+  RGB_update(pos(8,1), 0,0,0);delay(1);
+  RGB_update(pos(8,2), 0,0,0);delay(1);
+  RGB_update(pos(9,0), 0,0,0);delay(1);
+  RGB_update(pos(10,0), 0,0,0);delay(1);
+  delay(10);
+
+  RGB_update(pos(23,0), 0,0,0);delay(1);
+  RGB_update(pos(23,1), 0,0,0);delay(1);
+  RGB_update(pos(23,2), 0,0,0);delay(1);
+  RGB_update(pos(22,0), 0,0,0);delay(1);
+  RGB_update(pos(21,0), 0,0,0);delay(1);
+  delay(10);
+
+  RGB_update(pos(8,15), 0,0,0);delay(1);
+  RGB_update(pos(8,14), 0,0,0);delay(1);
+  RGB_update(pos(8,13), 0,0,0);delay(1);
+  RGB_update(pos(9,15), 0,0,0);delay(1);
+  RGB_update(pos(10,15), 0,0,0);delay(1);
+  delay(10);
+
+  RGB_update(pos(23,15), 0,0,0);delay(1);
+  RGB_update(pos(23,14), 0,0,0);delay(1);
+  RGB_update(pos(23,13), 0,0,0);delay(1);
+  RGB_update(pos(22,15), 0,0,0);delay(1);
+  RGB_update(pos(21,15), 0,0,0);delay(1);
+  delay(10);
+
+  RGB_update(pos(9,1), 11,0,24);delay(1);
+  for(int x=10;x<22;x++){
+    RGB_update(pos(x,2), 11,0,24);delay(1);
+  }
+  RGB_update(pos(22,1), 11,0,24);delay(1);
+  for(int y=2;y<14;y++){
+    RGB_update(pos(21,y), 11,0,24);delay(1);
+  }
+  RGB_update(pos(22,14), 11,0,24);delay(1);
+  for(int x=21;x>9;x--){
+    RGB_update(pos(x,13), 11,0,24);delay(1);
+  }
+  RGB_update(pos(9,14), 11,0,24);delay(1);
+  for(int y=13;y>2;y--){
+    RGB_update(pos(10,y), 11,0,24);delay(1);
+  }
+
+
+  delay(1000);
+}
+
+
+//WS2812 Driver Function
+void RGB_update(int LED, byte RED, byte GREEN, byte BLUE) {
+  // LED is the LED number starting with 0
+  // RED, GREEN, BLUE is the brightness 0..255 setpoint for that LED
+  byte ExistingPort, WS2812pinHIGH;//local variables here to speed up pinWrites
+  
+  if(LED>=0){//map the REG GREEN BLUE Values into the RGB[] array
+  RGB[LED * 3] = GREEN;
+  RGB[LED * 3 + 1] = RED;
+  RGB[LED * 3 + 2] = BLUE;
+  }
+  
+  noInterrupts();//kill the interrupts while we send the bit stream out...
+  ExistingPort = PORTB; // save the status of the entire PORT B - let's us write to the entire port without messing up the other pins on that port
+  WS2812pinHIGH = PORTB | 1; //this gives us a byte we can use to set the whole PORTB with the WS2812 pin HIGH
+  int bitStream = numberOfLEDs * 3;//total bytes in the LED string
+
+//This for loop runs through all of the bits (8 at a time) to set the WS2812 pin ON/OFF times
+  for (int i = 0; i < bitStream; i++) {
+
+    PORTB = WS2812pinHIGH;//bit 7  first, set the pin HIGH - it always goes high regardless of a 0/1 
+    
+    //here's the tricky part, check if the bit in the byte is high/low then right that status to the pin
+    // (RGB[i] & B10000000) will strip away the other bits in RGB[i], so here we'll be left with B10000000 or B00000000
+    // then it's easy to check if the bit is high or low by AND'ing that with the bit mask ""&& B10000000)"" this gives 1 or 0
+    // if it's a 1, we'll OR that with the Existing port, thus keeping the pin HIGH, if 0 the pin is written LOW
+    PORTB = ((RGB[i] & B10000000) && B10000000) | ExistingPort; 
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");//these are NOPS - these let us delay clock cycles for more precise timing 
+    PORTB = ExistingPort;//okay, here we know we have to be LOW regardless of the 0/1 bit state
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");//minimum LOW time for pin regardless of 0/1 bit state
+
+    // then do it again for the next bit and so on... see the last bit though for a slight change
+
+    PORTB = WS2812pinHIGH;//bit 6
+    PORTB = ((RGB[i] & B01000000) && B01000000) | ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    PORTB = ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+    PORTB = WS2812pinHIGH;//bit 5
+    PORTB = ((RGB[i] & B00100000) && B00100000) | ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    PORTB = ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+    PORTB = WS2812pinHIGH;//bit 4
+    PORTB = ((RGB[i] & B00010000) && B00010000) | ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    PORTB = ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+    PORTB = WS2812pinHIGH;//bit 3
+    PORTB = ((RGB[i] & B00001000) && B00001000) | ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    PORTB = ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+    PORTB = WS2812pinHIGH;//bit 2
+    PORTB = ((RGB[i] & B00000100) && B00000100) | ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    PORTB = ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+    PORTB = WS2812pinHIGH;//bit 1
+    PORTB = ((RGB[i] & B00000010) && B00000010) | ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    PORTB = ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+    PORTB = WS2812pinHIGH;//bit 0
+    __asm__("nop\n\t");//on this last bit, the check is much faster, so had to add a NOP here
+    PORTB = ((RGB[i] & B00000001) && B00000001) | ExistingPort;
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t"); 
+    PORTB = ExistingPort;//note there are no NOPs after writing the pin LOW, this is because the FOR Loop uses clock cycles that we can use instead of the NOPS
+  }//for loop
+
+  
+  interrupts();//enable the interrupts
+
+// all done!
+}//void RGB_update
